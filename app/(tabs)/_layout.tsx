@@ -1,8 +1,7 @@
+import CustomTabBar from '@/components/CustomTabBar';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-// Make sure this path is correct for your project structure
-import CustomTabBar from '@/components/CustomTabBar';
 
 // Corrected icon imports
 import {

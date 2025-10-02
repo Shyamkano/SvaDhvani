@@ -1,8 +1,9 @@
-// components/CustomTabBar.tsx --- CORRECTED VERSION ---
+// components/CustomTabBar.tsx --- ANIMATED VERSION ---
 
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
 // Import the full design system
 import { Colors, Radius, Spacing, TextVariants } from '../constants/theme'; // Make sure this path is correct
@@ -13,19 +14,17 @@ type CustomTabBarProps = {
   navigation: any;
 };
 
+// Create an animatable version of the Pressable component
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export default function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
-  const colorScheme = useColorScheme() ?? 'dark'; 
+  const colorScheme = useColorScheme() ?? 'dark';
   const currentThemeColors = Colors[colorScheme];
 
   return (
     <View style={styles.tabBarContainer}>
-      <BlurView
-        intensity={80}
-        tint="dark"
-        style={styles.blurView}
-      >
+      <BlurView intensity={80} tint="dark" style={styles.blurView}>
         {state.routes.map((route: any, index: number) => {
-          // Safety Check: If a route has no corresponding descriptor, skip it.
           if (!descriptors[route.key]) {
             return null;
           }
@@ -43,18 +42,28 @@ export default function CustomTabBar({ state, descriptors, navigation }: CustomT
           };
 
           const onLongPress = () => navigation.emit({ type: 'tabLongPress', target: route.key });
-          
+
           const Icon = options.tabBarIcon;
-          
-          // Safety Check: If tabBarIcon is not defined for some reason, don't render this tab item.
           if (!Icon) {
             return null;
           }
-          
+
           const color = isFocused ? currentThemeColors.tabIconSelected : currentThemeColors.tabIconDefault;
 
+          // Animated style for the icon container
+          const animatedIconContainerStyle = useAnimatedStyle(() => {
+            return {
+              // Animate the background color with a timing function for a smooth fade
+              backgroundColor: withTiming(isFocused ? Colors.dark.glow : 'transparent', {
+                duration: 300,
+              }),
+              // Animate the scale with a spring for a bouncy effect
+              transform: [{ scale: withSpring(isFocused ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
+            };
+          });
+
           return (
-            <Pressable
+            <AnimatedPressable
               key={route.key}
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
@@ -62,14 +71,13 @@ export default function CustomTabBar({ state, descriptors, navigation }: CustomT
               onLongPress={onLongPress}
               style={styles.tabItem}
             >
-              <View style={[styles.iconContainer, isFocused && styles.iconContainerFocused]}>
-                 {/* ✅ THE FIX: We are removing the 'focused' prop for now, as it's the most likely cause of the error. */}
-                 <Icon color={color} />
-              </View>
+              <Animated.View style={[styles.iconContainer, animatedIconContainerStyle]}>
+                <Icon color={color} />
+              </Animated.View>
               <Text style={[{ color }, styles.label]}>
                 {label}
               </Text>
-            </Pressable>
+            </AnimatedPressable>
           );
         })}
       </BlurView>
@@ -77,7 +85,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: CustomT
   );
 }
 
-// Your styles remain the same
+// Styles remain the same
 const styles = StyleSheet.create({
   tabBarContainer: {
     position: 'absolute',
@@ -116,9 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: Spacing.xs,
   },
-  iconContainerFocused: {
-    backgroundColor: Colors.dark.glow,
-  },
+  // We no longer need the iconContainerFocused style, as Reanimated handles it
   label: {
     ...TextVariants.label,
   },
