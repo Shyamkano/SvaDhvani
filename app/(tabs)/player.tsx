@@ -3,12 +3,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StatusBar, Text, useWindowDimensions, View } from 'react-native';
-import Animated, { Easing, FadeInDown, FadeInUp, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import all necessary icons directly
-import { Brain, ChevronLeft, Crosshair, Moon, Pause, Play, Sparkles, Wind, Zap } from 'lucide-react-native';
+import { BrainIcon as Brain, ArrowLeft01FreeIcons as ChevronLeft, Target02Icon as Crosshair, SleepingFreeIcons as Moon, PauseIcon as Pause, PlayIcon as Play, SparklesFreeIcons as Sparkles, FastWindFreeIcons as Wind, ElectricHome01FreeIcons as Zap } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react-native';
 
+import AnimatedScreen from '@/components/AnimatedScreen';
+import { usePlayer, type Session } from '@/context/PlayerContext';
 // Import our design system
 import { Colors, Spacing, styles } from '../../constants/theme';
 
@@ -25,19 +28,40 @@ const categories = [
 
 // --- Main Component ---
 export default function PlayerScreen() {
+  const { startSession, closePlayer, isPlaying, currentSession, currentTime } = usePlayer();
   const [activeTab, setActiveTab] = useState<'manual' | 'smart'>('manual');
-  const [isPlaying, setIsPlaying] = useState(false);
   const [frequency, setFrequency] = useState(12);
   const [selectedCategory, setSelectedCategory] = useState<string | null>('focus');
-  const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-    if (isPlaying) {
-      interval = setInterval(() => setDuration((prev) => prev + 1), 1000);
+  const handleManualPlayToggle = () => {
+    if (isPlaying && currentSession?.id === 'manual-session') {
+        closePlayer();
+    } else {
+        const sessionToStart: Session = {
+            id: 'manual-session',
+            name: `Manual Session - ${frequency} Hz`,
+            category: selectedCategory || 'Custom',
+            frequency: frequency,
+            duration: 0, // indefinite
+        };
+        startSession(sessionToStart);
     }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
+  };
+
+  const handleSmartPlayToggle = () => {
+      if (isPlaying && currentSession?.id === 'smart-session') {
+          closePlayer();
+      } else {
+          const sessionToStart: Session = {
+              id: 'smart-session',
+              name: 'AI Recommendation - Focus Session',
+              category: 'Focus',
+              frequency: 12, // from the recommendation
+              duration: 1800, // 30 minutes
+          };
+          startSession(sessionToStart);
+      }
+  };
 
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -46,28 +70,34 @@ export default function PlayerScreen() {
   };
 
   return (
+    <AnimatedScreen>
     <LinearGradient colors={[Colors.dark.background, Colors.dark.cardDarker]} style={styles.container}>
       <WaveBackground />
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
         <StatusBar barStyle="light-content" />
         <Header />
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-          <Animated.View entering={FadeInUp.duration(400)}>
+          <View>
             <AnimatedTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          </Animated.View>
+          </View>
           {activeTab === 'manual' ? (
             <ManualModeContent
-              isPlaying={isPlaying} setIsPlaying={setIsPlaying}
+              isPlaying={isPlaying && currentSession?.id === 'manual-session'}
+              onPlayPress={handleManualPlayToggle}
               frequency={frequency} setFrequency={setFrequency}
               selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}
-              duration={duration} formatTime={formatTime}
+              duration={currentTime} formatTime={formatTime}
             />
           ) : (
-            <SmartModeContent isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+            <SmartModeContent 
+              isPlaying={isPlaying && currentSession?.id === 'smart-session'} 
+              onPlayPress={handleSmartPlayToggle} 
+            />
           )}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
+    </AnimatedScreen>
   );
 }
 
@@ -117,10 +147,10 @@ const AnimatedTabs = ({ activeTab, setActiveTab }: any) => {
 // ... The rest of your components (SmartModeContent, ManualModeContent, etc.) remain unchanged.
 // For brevity, I'll include the full, correct code below this point.
 
-const SmartModeContent = ({ isPlaying, setIsPlaying }: any) => (
-  <Animated.View entering={FadeInDown.duration(400).delay(100)} style={{ gap: Spacing.l }}>
+const SmartModeContent = ({ isPlaying, onPlayPress }: any) => (
+  <View style={{ gap: Spacing.l }}>
     <LinearGradient colors={[Colors.dark.primary, Colors.dark.secondary]} style={styles.aiCard}>
-      <View style={styles.aiHeader}><Brain size={20} color={'rgba(255,255,255,0.9)'} /><Text style={styles.aiCardSub}>AI Recommendation</Text></View>
+      <View style={styles.aiHeader}><HugeiconsIcon icon={Brain} size={20} color={'rgba(255,255,255,0.9)'} /><Text style={styles.aiCardSub}>AI Recommendation</Text></View>
       <Text style={styles.aiCardTitle}>Focus Session</Text>
       <Text style={styles.aiCardBody}>Based on your recent activity and time of day, we recommend a Focus session at 12 Hz to boost concentration.</Text>
       <View style={styles.aiTagsContainer}>
@@ -129,10 +159,10 @@ const SmartModeContent = ({ isPlaying, setIsPlaying }: any) => (
         <View style={styles.aiTag}><Text style={styles.aiTagText}>95% Match</Text></View>
       </View>
     </LinearGradient>
-    <Pressable style={styles.smartPlayButton} onPress={() => setIsPlaying(!isPlaying)}>
+    <Pressable style={styles.smartPlayButton} onPress={onPlayPress}>
       <View style={styles.smartPlayContent}>
         <LinearGradient colors={[Colors.dark.primary, Colors.dark.secondary]} style={styles.smartPlayIconContainer}>
-          {isPlaying ? <Pause size={28} color="white" /> : <Play size={28} color="white" style={{ marginLeft: 3 }} />}
+          {isPlaying ? <HugeiconsIcon icon={Pause} size={28} color="white" /> : <HugeiconsIcon icon={Play} size={28} color="white" style={{ marginLeft: 3 }} />}
         </LinearGradient>
         <View><Text style={styles.sectionTitle}>{isPlaying ? "Pause Session" : "Start Smart Session"}</Text><Text style={styles.timerLabel}>One-tap AI-powered session</Text></View>
       </View>
@@ -145,7 +175,7 @@ const SmartModeContent = ({ isPlaying, setIsPlaying }: any) => (
         <WhyItem num="3" text="30-minute sessions yield best results for your focus goals" color={Colors.dark.accent} />
       </View>
     </View>
-  </Animated.View>
+  </View>
 );
 
 const WhyItem = ({ num, text, color }: { num: string, text: string, color: string }) => (
@@ -155,8 +185,8 @@ const WhyItem = ({ num, text, color }: { num: string, text: string, color: strin
   </View>
 );
 
-const ManualModeContent = ({ isPlaying, setIsPlaying, frequency, setFrequency, selectedCategory, setSelectedCategory, duration, formatTime }: any) => (
-  <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+const ManualModeContent = ({ isPlaying, onPlayPress, frequency, setFrequency, selectedCategory, setSelectedCategory, duration, formatTime }: any) => (
+  <View>
     <View style={styles.categoryGrid}>
       {categories.map((category) => (
         <CategoryCard key={category.id} category={category} isSelected={selectedCategory === category.id} onPress={() => setSelectedCategory(category.id)} />
@@ -173,30 +203,30 @@ const ManualModeContent = ({ isPlaying, setIsPlaying, frequency, setFrequency, s
       />
     </View>
     <View style={{ alignItems: 'center' }}>
-      <PlayButton isPlaying={isPlaying} onPress={() => setIsPlaying(!isPlaying)} />
+      <PlayButton isPlaying={isPlaying} onPress={onPlayPress} />
     </View>
     {isPlaying && (
-      <Animated.View entering={FadeInDown.duration(500)} style={styles.timerContainer}>
+      <Animated.View style={styles.timerContainer}>
         <Text style={styles.timerText}>{formatTime(duration)}</Text>
         <Text style={styles.timerLabel}>Session Duration</Text>
       </Animated.View>
     )}
-  </Animated.View>
+  </View>
 );
 
 const Header = () => (
-    <Animated.View entering={FadeInUp.duration(500)} style={styles.header}>
-      <Pressable onPress={() => router.back()} style={styles.backButton}><ChevronLeft size={28} color={Colors.dark.text} /></Pressable>
+    <View style={styles.header}>
+      <Pressable onPress={() => router.back()} style={styles.backButton}><HugeiconsIcon icon={ChevronLeft} size={28} color={Colors.dark.text} /></Pressable>
       <Text style={styles.headerTitle}>Session</Text>
       <View style={{ width: 48 }} />
-    </Animated.View>
+    </View>
 );
   
 const CategoryCard = ({ category, isSelected, onPress }: any) => {
     const { Icon, name, freq, colors } = category;
     const content = (
       <View style={styles.categoryContent}>
-        <View style={[styles.categoryIconContainer, { backgroundColor: isSelected ? 'rgba(255,255,255,0.3)' : Colors.dark.cardAccent }]}><Icon size={32} color={isSelected ? '#FFFFFF' : Colors.dark.primary} /></View>
+        <View style={[styles.categoryIconContainer, { backgroundColor: isSelected ? 'rgba(255,255,255,0.3)' : Colors.dark.cardAccent }]}><HugeiconsIcon icon={Icon} size={32} color={isSelected ? '#FFFFFF' : Colors.dark.primary} /></View>
         <Text style={[styles.categoryName, { color: isSelected ? '#FFFFFF' : Colors.dark.text }]}>{name}</Text>
         <Text style={[styles.categoryFreq, { color: isSelected ? 'rgba(255,255,255,0.8)' : Colors.dark.textMedium }]}>{freq}</Text>
       </View>
@@ -225,7 +255,7 @@ const PlayButton = ({ isPlaying, onPress }: any) => {
       <Pressable onPress={onPress}>
         <LinearGradient colors={[Colors.dark.primary, Colors.dark.secondary]} style={styles.playButton}>
           {isPlaying && <Animated.View style={[styles.pulsingRing, animatedStyle]} />}
-          {isPlaying ? <Pause size={48} color="white" fill="white" /> : <Play size={48} color="white" fill="white" style={{ marginLeft: 5 }} />}
+          {isPlaying ? <HugeiconsIcon icon={Pause} size={48} color="white" /> : <HugeiconsIcon icon={Play} size={48} color="white" style={{ marginLeft: 5 }} />}
         </LinearGradient>
       </Pressable>
     );

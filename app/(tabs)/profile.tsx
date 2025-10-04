@@ -1,12 +1,12 @@
+import { Notification01FreeIcons as Bell, ArrowLeft01FreeIcons as ChevronLeft, ArrowRight01FreeIcons as ChevronRight, LogoutIcon as LogOut, SmartPhone01FreeIcons as Smartphone } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Bell, ChevronLeft, ChevronRight, LogOut, Smartphone } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
+import AnimatedScreen from '@/components/AnimatedScreen';
 // Custom SVG icon imports
 import HelpIcon from '../../components/icons/helpicons';
 import SettingsIcon from '../../components/icons/settingicon';
@@ -20,6 +20,7 @@ export default function ProfileSettings() {
   const [reminders, setReminders] = useState(true);
 
   return (
+    <AnimatedScreen>
     <LinearGradient colors={[Colors.dark.background, Colors.dark.cardDarker]} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
         <StatusBar barStyle="light-content" />
@@ -27,7 +28,7 @@ export default function ProfileSettings() {
 
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
           {/* Profile Card */}
-          <Animated.View entering={FadeInDown.duration(500).delay(100)}>
+          <View>
             <LinearGradient colors={[Colors.dark.primary, Colors.dark.secondary]} style={styles.profileCard}>
               <View style={styles.profileContent}>
                 <View style={styles.avatarContainer}>
@@ -44,19 +45,19 @@ export default function ProfileSettings() {
                 </View>
               </View>
             </LinearGradient>
-          </Animated.View>
+          </View>
 
           {/* Stats Grid */}
-          <Animated.View entering={FadeInDown.duration(500).delay(200)} style={styles.statsGrid}>
+          <View style={styles.statsGrid}>
             <StatBox value="42" label="Sessions" />
             <StatBox value="28h" label="Total Time" />
             <StatBox value="8.5" label="Avg Mood" />
-          </Animated.View>
+          </View>
 
           {/* Settings Section */}
-          <Animated.View entering={FadeInDown.duration(500).delay(300)}>
+          <View>
             <Section title="Settings">
-              <SettingsRow icon={<Bell color={Colors.dark.primary} />} title="Notifications" subtitle="Daily reminders">
+              <SettingsRow icon={<HugeiconsIcon icon={Bell} color={Colors.dark.primary} />} title="Notifications" subtitle="Daily reminders">
                 <Switch
                   value={notifications}
                   onValueChange={setNotifications}
@@ -64,7 +65,7 @@ export default function ProfileSettings() {
                   thumbColor={Colors.dark.white}
                 />
               </SettingsRow>
-              <SettingsRow icon={<Bell color={Colors.dark.secondary} />} title="Session Reminders" subtitle="Remind me to practice">
+              <SettingsRow icon={<HugeiconsIcon icon={Bell} color={Colors.dark.secondary} />} title="Session Reminders" subtitle="Remind me to practice">
                  <Switch
                   value={reminders}
                   onValueChange={setReminders}
@@ -75,8 +76,8 @@ export default function ProfileSettings() {
             </Section>
 
             <Section title="Connect Devices">
-              <SettingsRow icon={<Smartphone color={Colors.dark.accent} />} title="Google Fit" subtitle="Not connected" isPressable />
-              <SettingsRow icon={<Smartphone color={Colors.dark.primary} />} title="Apple Health" subtitle="Connected" isPressable>
+              <SettingsRow icon={<HugeiconsIcon icon={Smartphone} color={Colors.dark.accent} />} title="Google Fit" subtitle="Not connected" isPressable />
+              <SettingsRow icon={<HugeiconsIcon icon={Smartphone} color={Colors.dark.primary} />} title="Apple Health" subtitle="Connected" isPressable>
                 <View style={styles.connectedDot} />
               </SettingsRow>
             </Section>
@@ -87,7 +88,7 @@ export default function ProfileSettings() {
               <Pressable style={[styles.rowContainer, { backgroundColor: `${Colors.dark.accent}20`, borderColor: `${Colors.dark.accent}50` }]}>
                 <View style={styles.iconTextWrapper}>
                   <View style={[styles.iconContainer, { backgroundColor: `${Colors.dark.accent}20` }]}>
-                    <LogOut color={Colors.dark.accent} />
+                    <HugeiconsIcon icon={LogOut} color={Colors.dark.accent} />
                   </View>
                   <View>
                     <Text style={[styles.rowTitle, { color: Colors.dark.accent }]}>Log Out</Text>
@@ -96,22 +97,23 @@ export default function ProfileSettings() {
                 </View>
               </Pressable>
             </Section>
-          </Animated.View>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
+    </AnimatedScreen>
   );
 }
 
 // --- Reusable Sub-Components ---
 const Header = () => (
-  <Animated.View entering={FadeInUp.duration(500)} style={styles.header}>
+  <View style={styles.header}>
     <Pressable onPress={() => router.back()} style={styles.backButton}>
-      <ChevronLeft size={28} color={Colors.dark.text} />
+      <HugeiconsIcon icon={ChevronLeft} size={28} color={Colors.dark.text} />
     </Pressable>
     <Text style={styles.headerTitle}>Profile</Text>
     <View style={{ width: 48 }} />
-  </Animated.View>
+  </View>
 );
 
 const StatBox = ({ value, label }: { value: string; label: string }) => (
@@ -137,7 +139,7 @@ const SettingsRow = ({ icon, title, subtitle, isPressable, children }: any) => (
         <Text style={styles.rowSubtitle}>{subtitle}</Text>
       </View>
     </View>
-    {isPressable ? <ChevronRight color={Colors.dark.textMedium} /> : children}
+    {isPressable ? <HugeiconsIcon icon={ChevronRight} color={Colors.dark.textMedium} /> : children}
   </Pressable>
 );
 

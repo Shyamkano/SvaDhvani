@@ -1,3 +1,4 @@
+import { ThemeProvider, DarkTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -7,13 +8,25 @@ import 'react-native-reanimated';
 // Adjust these paths to match your project structure
 import { PlayerProvider } from 'context/PlayerContext';
 import FloatingPlayer from '../components/FloatingPlayer';
+import { Colors } from '../constants/Colors';
 
 // This prevents the native splash screen from auto-hiding before our app is ready.
 SplashScreen.preventAutoHideAsync();
 
+// Create a custom theme to override the default navigation theme
+const MyTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: Colors.background.dark,
+    card: Colors.background.card,
+  },
+};
+
 export default function RootLayout() {
   // This state will track when our entire startup sequence is complete.
   const [isAppReady, setAppReady] = useState(false);
+  const [isInitialized, setInitialized] = useState(false);
 
   // Load custom fonts
   const [fontsLoaded, fontError] = useFonts({
@@ -45,12 +58,13 @@ export default function RootLayout() {
   // Effect to perform the navigation once the app is ready
   useEffect(() => {
     // We only navigate if the app is marked as ready.
-    if (isAppReady) {
+    if (isAppReady && !isInitialized) {
       // Replace the current route (splash screen) with the main app layout.
       // This prevents the user from navigating back to the splash screen.
       router.replace('/home');
+      setInitialized(true);
     }
-  }, [isAppReady]);
+  }, [isAppReady, isInitialized]);
   
   // If fonts are not loaded yet, we render nothing.
   // This keeps the native splash screen (defined in app.json) visible.
@@ -60,16 +74,18 @@ export default function RootLayout() {
 
   return (
     <PlayerProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        {/* Defines the 'index' route which points to your custom SplashScreen component */}
-        <Stack.Screen name="index" />
+      <ThemeProvider value={MyTheme}>
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* Defines the 'index' route which points to your custom SplashScreen component */}
+          <Stack.Screen name="index" />
+          
+          {/* Defines the '(app)' group which contains your main app (tabs, etc.) */}
+          <Stack.Screen name="(app)" />
+        </Stack>
         
-        {/* Defines the '(app)' group which contains your main app (tabs, etc.) */}
-        <Stack.Screen name="(app)" />
-      </Stack>
-      
-      {/* The FloatingPlayer sits on top of the Stack Navigator, making it globally persistent */}
-      <FloatingPlayer />
+        {/* The FloatingPlayer sits on top of the Stack Navigator, making it globally persistent */}
+        <FloatingPlayer />
+      </ThemeProvider>
     </PlayerProvider>
   );
 }

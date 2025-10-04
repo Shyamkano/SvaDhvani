@@ -1,7 +1,8 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Pause, Play, X } from 'lucide-react-native';
+import { PauseIcon as Pause, PlayIcon as Play, Delete01Icon as X } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react-native';
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, FadeInDown, FadeOutDown, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
@@ -68,10 +69,10 @@ export default function FloatingPlayer() {
           
           <View style={styles.controls}>
             <Pressable onPress={togglePlayPause} style={styles.playButton}>
-              {isPlaying ? <Pause size={20} color="white" fill="white"/> : <Play size={20} color="white" fill="white" style={{marginLeft: 2}}/>}
+              {isPlaying ? <HugeiconsIcon icon={Pause} size={20} color="white" /> : <HugeiconsIcon icon={Play} size={20} color="white" style={{marginLeft: 2}}/>}
             </Pressable>
             <Pressable onPress={closePlayer} style={styles.closeButton}>
-              <X size={16} color={Colors.dark.textMedium} />
+              <HugeiconsIcon icon={X} size={16} color={Colors.dark.textMedium} />
             </Pressable>
           </View>
         </Pressable>

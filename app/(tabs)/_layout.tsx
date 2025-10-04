@@ -12,6 +12,7 @@ import {
 } from '@hugeicons/core-free-icons';
 
 import { HugeiconsIcon } from '@hugeicons/react-native';
+import { Colors } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
@@ -19,6 +20,7 @@ export default function TabLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        sceneContainerStyle: { backgroundColor: Colors.dark.background },
       }}
     >
       {/* This handles the redirect from your splash screen */}

@@ -84,52 +84,40 @@ export const Colors = {
 // --------------------------------------------------
 // TYPOGRAPHY - Font families and sizes.
 // --------------------------------------------------
-export const Fonts = Platform.select({
-  ios: {
-    sans: 'system-ui',
-    sansMedium: 'system-ui',
-    sansBold: 'system-ui',
-  },
-  android: {
-    sans: 'normal',
-    sansMedium: 'normal',
-    sansBold: 'normal',
-  },
-  default: {
-    sans: 'sans-serif',
-    sansMedium: 'sans-serif-medium',
-    sansBold: 'sans-serif-bold',
-  },
-});
+export const Fonts = {
+  sans: 'Inter-Regular',
+  sansMedium: 'Inter-Medium',
+  sansBold: 'Inter-Bold',
+};
 
 export const TextVariants = {
   h1: {
-    fontFamily: Fonts.sansBold, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sansBold,
     fontSize: 32,
     color: Colors.dark.text,
   },
   h2: {
-    fontFamily: Fonts.sansBold, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sansBold,
     fontSize: 24,
     color: Colors.dark.text,
   },
   h3: {
-    fontFamily: Fonts.sansMedium, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sansBold,
     fontSize: 20,
     color: Colors.dark.text,
   },
   body: {
-    fontFamily: Fonts.sans, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sansMedium,
     fontSize: 16,
     color: Colors.dark.text,
   },
   secondary: {
-    fontFamily: Fonts.sans, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sans,
     fontSize: 14,
     color: Colors.dark.textMedium,
   },
   label: {
-    fontFamily: Fonts.sansMedium, // ✅ FIXED: Access directly
+    fontFamily: Fonts.sansMedium,
     fontSize: 12,
     // Color is applied in the component to handle focus state
   },
