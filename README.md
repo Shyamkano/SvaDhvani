@@ -1,50 +1,104 @@
-# Welcome to your Expo app 👋
+<div align="center">
+  <img src="./assets/images/banner.png" alt="Beatus Banner" width="100%">
+  
+  # ✨ Beatus
+</div>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Beatus** (Latin for *blessed*, *fortunate*, or *happy*) is a modern wellness and mindfulness application designed to enhance mental well-being through binaural beats and comprehensive health tracking. Built with Expo and React Native, Beatus bridges the gap between auditory therapy and fitness data.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Key Features
 
-   ```bash
-   npm install
-   ```
+### 🎧 Binaural Beats Player
+Experience custom-generated binaural beats tailored for focus, deep sleep, relaxation, and mindfulness. 
+- **Real-time Frequency Control**: Seamless audio playback using `expo-audio`.
+- **Session Logging**: Automatically tracks your mindfulness journey.
 
-2. Start the app
+### ⌚ Google Fit Integration (Smartwatch Connectivity)
+Sync your physiological data directly from your wearable devices.
+- **Health Metrics**: Real-time tracking of Heart Rate, Steps, Sleep patterns, and Activity levels.
+- **Secure Authentication**: Robust implementation using Supabase and Google OAuth.
 
-   ```bash
-   npx expo start
-   ```
+### 📊 Health Dashboard & Analytics
+Visualize your progress with beautiful, interactive visualizations.
+- **Interactive Charts**: Powered by `react-native-gifted-charts`.
+- **Historical Analysis**: Review your previous sessions and mood trends.
 
-In the output, you'll find options to open the app in a
+### 🎨 Modern UI/UX
+- **Dynamic Theming**: Support for both Dark and Light modes.
+- **Premium Aesthetics**: Glassmorphism, linear gradients, and smooth animations using `react-native-reanimated`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🛠️ Tech Stack
 
-## Get a fresh project
+- **Framework**: [Expo](https://expo.dev) / [React Native](https://reactnative.dev)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Backend**: [Supabase](https://supabase.com) (Auth, Database, Storage)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Routing**: [Expo Router](https://docs.expo.dev/router/introduction) (File-based routing)
+- **Icons**: Hugeicons, Lucide React Native
+- **Styling**: Expo Linear Gradient, React Native Reanimated
 
-When you're ready, run:
+---
 
+## 📦 Installation & Setup
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (LTS)
+- npm or yarn
+- [Expo Go](https://expo.dev/go) app on your mobile device (for testing)
+
+### Step 1: Clone the Repository
 ```bash
-npm run reset-project
+git clone https://github.com/[your-username]/beatus.git
+cd beatus
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Step 2: Install Dependencies
+```bash
+npm install
+```
 
-## Learn more
+### Step 3: Environment Configuration
+Create a `.env` file in the root directory and add your Supabase and Google API credentials:
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Additional IDs for Google Sign-In
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Step 4: Start Developing
+```bash
+npx expo start
+```
+Scan the QR code with your Expo Go app or press `a` for Android Emulator / `i` for iOS Simulator.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🏗️ Project Structure
 
-Join our community of developers creating universal apps.
+- `app/`: Expo Router file-based pages and layouts.
+- `components/`: Reusable UI components.
+- `context/`: React Context providers (Player, Auth).
+- `hooks/`: Custom hooks for audio, theme, and health data.
+- `lib/`: Configuration files (Supabase client, API client).
+- `constants/`: Theme tokens, colors, and global constants.
+- `assets/`: Lottie animations, images, and fonts.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🔐 Permissions
+The application requires the following permissions for full functionality:
+- **Health Data**: Access to Google Fit data types (Heart rate, steps, sleep).
+- **Audio**: Record/Modify audio settings for the binaural beats playback.
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+*Developed by [Shyamkano](https://github.com/Shyamkano)*

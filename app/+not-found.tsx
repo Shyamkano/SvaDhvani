@@ -11,7 +11,7 @@ export default function NotFoundScreen() {
     <LinearGradient colors={[Colors.dark.background, Colors.dark.cardDarker]} style={styles.container}>
       <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Stack.Screen options={{ title: 'Oops!' }} />
-        <Text style={styles.title}>This screen doesn't exist.</Text>
+        <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
         <Link href="/(tabs)/home" style={styles.link}>
           <Text style={styles.linkText}>Go to home screen!</Text>
         </Link>

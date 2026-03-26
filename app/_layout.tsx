@@ -1,4 +1,4 @@
-import { ThemeProvider, DarkTheme } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -61,7 +61,7 @@ export default function RootLayout() {
     if (isAppReady && !isInitialized) {
       // Replace the current route (splash screen) with the main app layout.
       // This prevents the user from navigating back to the splash screen.
-      router.replace('/home');
+      router.replace('/login');
       setInitialized(true);
     }
   }, [isAppReady, isInitialized]);
@@ -78,6 +78,8 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           {/* Defines the 'index' route which points to your custom SplashScreen component */}
           <Stack.Screen name="index" />
+
+          <Stack.Screen name="login" />
           
           {/* Defines the '(app)' group which contains your main app (tabs, etc.) */}
           <Stack.Screen name="(app)" />

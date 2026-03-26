@@ -37,8 +37,8 @@ export default function SplashScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace('/home');
-    }, 3000);
+      router.replace('/login');
+    }, 4000); // Display splash screen for 4 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -61,12 +61,12 @@ export default function SplashScreen() {
             style={{ height: 60 }}
             maskElement={<Text style={styles.appNameMask}>Beatus</Text>}
           >
-            <LinearGradient
+            {/* <LinearGradient
               colors={[Colors.dark.primary, Colors.dark.secondary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{ flex: 1 }}
-            />
+            /> */}
           </MaskedView>
         </Animated.View>
 

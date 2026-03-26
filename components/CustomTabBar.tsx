@@ -17,10 +17,59 @@ type CustomTabBarProps = {
 // Create an animatable version of the Pressable component
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export default function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
+const TabItem = ({ route, index, state, descriptors, navigation }) => {
+  const { options } = descriptors[route.key];
+  const label = options.title !== undefined ? options.title : route.name;
+  const isFocused = state.index === index;
   const colorScheme = useColorScheme() ?? 'dark';
   const currentThemeColors = Colors[colorScheme];
 
+  const animatedIconContainerStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: withTiming(isFocused ? Colors.dark.glow : 'transparent', {
+        duration: 300,
+      }),
+      transform: [{ scale: withSpring(isFocused ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
+    };
+  });
+
+  const onPress = () => {
+    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    if (!isFocused && !event.defaultPrevented) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.navigate(route.name, route.params);
+    }
+  };
+
+  const onLongPress = () => navigation.emit({ type: 'tabLongPress', target: route.key });
+
+  const Icon = options.tabBarIcon;
+  if (!Icon) {
+    return null;
+  }
+
+  const color = isFocused ? currentThemeColors.tabIconSelected : currentThemeColors.tabIconDefault;
+
+  return (
+    <AnimatedPressable
+      key={route.key}
+      accessibilityRole="button"
+      accessibilityState={isFocused ? { selected: true } : {}}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      style={styles.tabItem}
+    >
+      <Animated.View style={[styles.iconContainer, animatedIconContainerStyle]}>
+        <Icon color={color} />
+      </Animated.View>
+      <Text style={[{ color }, styles.label]}>
+        {label}
+      </Text>
+    </AnimatedPressable>
+  );
+};
+
+export default function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
   return (
     <View style={styles.tabBarContainer}>
       <BlurView intensity={80} tint="dark" style={styles.blurView}>
@@ -29,55 +78,15 @@ export default function CustomTabBar({ state, descriptors, navigation }: CustomT
             return null;
           }
 
-          const { options } = descriptors[route.key];
-          const label = options.title !== undefined ? options.title : route.name;
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-            if (!isFocused && !event.defaultPrevented) {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate(route.name, route.params);
-            }
-          };
-
-          const onLongPress = () => navigation.emit({ type: 'tabLongPress', target: route.key });
-
-          const Icon = options.tabBarIcon;
-          if (!Icon) {
-            return null;
-          }
-
-          const color = isFocused ? currentThemeColors.tabIconSelected : currentThemeColors.tabIconDefault;
-
-          // Animated style for the icon container
-          const animatedIconContainerStyle = useAnimatedStyle(() => {
-            return {
-              // Animate the background color with a timing function for a smooth fade
-              backgroundColor: withTiming(isFocused ? Colors.dark.glow : 'transparent', {
-                duration: 300,
-              }),
-              // Animate the scale with a spring for a bouncy effect
-              transform: [{ scale: withSpring(isFocused ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
-            };
-          });
-
           return (
-            <AnimatedPressable
+            <TabItem
               key={route.key}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={styles.tabItem}
-            >
-              <Animated.View style={[styles.iconContainer, animatedIconContainerStyle]}>
-                <Icon color={color} />
-              </Animated.View>
-              <Text style={[{ color }, styles.label]}>
-                {label}
-              </Text>
-            </AnimatedPressable>
+              route={route}
+              index={index}
+              state={state}
+              descriptors={descriptors}
+              navigation={navigation}
+            />
           );
         })}
       </BlurView>
