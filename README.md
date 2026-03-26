@@ -4,101 +4,82 @@
   # ✨ Beatus
 </div>
 
-**Beatus** (Latin for *blessed*, *fortunate*, or *happy*) is a modern wellness and mindfulness application designed to enhance mental well-being through binaural beats and comprehensive health tracking. Built with Expo and React Native, Beatus bridges the gap between auditory therapy and fitness data.
+**Beatus** (Latin for *blessed*, *fortunate*, or *happy*) is an advanced AI-driven wellness application that synchronizes your physiological state with personalized auditory therapy. It uses machine learning models to analyze smartwatch data and programmatically generate binaural beats tailored to your real-time mood.
+
+---
+
+## 🧠 The Technical Core
+
+Beatus is not just a music player; it's a closed-loop health system powered by custom Machine Learning models:
+
+### 🔬 EEG & Sensor Fusion Model
+The system ingests high-fidelity data from your smartwatch via Google Fit (Heart Rate, Sleep Stages, Activity Intensity, etc.). 
+- **Sensor Model**: Processes physiological signals to identify patterns in your daily wellness.
+- **EEG Inference**: Incorporates simulated/modeled EEG data patterns to refine the understanding of your cognitive state.
+
+### 🎭 Mood Prediction Engine
+Our custom ML model analyzes the fused sensor data to suggest your current emotional and cognitive state (e.g., Stressed, Focused, Exhausted, or Calm).
+
+### 🎼 Programmatic Binaural Generation
+Unlike static audio files, Beatus communicates with a custom API to generate audio frequencies in real-time.
+- **Dynamic Frequencies**: The app requests specific binaural offsets (Alpha, Beta, Theta, or Delta) that counteract your current state or enhance a desired one.
+- **Closed-Loop Feedback**: As your health metrics improve during a session, the audio frequencies adapt to maintain the optimal mental state.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[Smartwatch / Wearable] -->|Google Fit API| B(Beatus Mobile App)
+    B -->|Physiological Data| C{Custom Flask API}
+    C -->|Sensor Model| D[Mood Analysis]
+    C -->|EEG Model| D
+    D -->|Predicted State| E[Binaural Beat Logic]
+    E -->|Frequency Params| F[Audio Synthesis Engine]
+    F -->|Real-time Audio| B
+    B -->|User Feedback| C
+```
 
 ---
 
 ## 🚀 Key Features
 
-### 🎧 Binaural Beats Player
-Experience custom-generated binaural beats tailored for focus, deep sleep, relaxation, and mindfulness. 
-- **Real-time Frequency Control**: Seamless audio playback using `expo-audio`.
-- **Session Logging**: Automatically tracks your mindfulness journey.
-
-### ⌚ Google Fit Integration (Smartwatch Connectivity)
-Sync your physiological data directly from your wearable devices.
-- **Health Metrics**: Real-time tracking of Heart Rate, Steps, Sleep patterns, and Activity levels.
-- **Secure Authentication**: Robust implementation using Supabase and Google OAuth.
-
-### 📊 Health Dashboard & Analytics
-Visualize your progress with beautiful, interactive visualizations.
-- **Interactive Charts**: Powered by `react-native-gifted-charts`.
-- **Historical Analysis**: Review your previous sessions and mood trends.
-
-### 🎨 Modern UI/UX
-- **Dynamic Theming**: Support for both Dark and Light modes.
-- **Premium Aesthetics**: Glassmorphism, linear gradients, and smooth animations using `react-native-reanimated`.
+- **🎧 Predictive Audio**: Binaural beats generated according to your predicted mood.
+- **⌚ Smartwatch Sync**: Real-time tracking of HR, Steps, Sleep, and Activity via Google Fit.
+- **📊 Interactive Analytics**: Visualize the correlation between your audio sessions and your health metrics.
+- **🛡️ Secure & Private**: Encrypted data handling with Supabase and secure OAuth 2.0.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Expo](https://expo.dev) / [React Native](https://reactnative.dev)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Backend**: [Supabase](https://supabase.com) (Auth, Database, Storage)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Routing**: [Expo Router](https://docs.expo.dev/router/introduction) (File-based routing)
-- **Icons**: Hugeicons, Lucide React Native
-- **Styling**: Expo Linear Gradient, React Native Reanimated
+- **Frontend**: Expo, React Native, TypeScript, Expo Router
+- **Backend**: Custom Flask API (ML Inference Engine)
+- **Database/Auth**: Supabase
+- **Health Data**: Google Fit SDK
+- **Data Viz**: React Native Gifted Charts
+- **Animations**: Lottie, Reanimated
 
 ---
 
 ## 📦 Installation & Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (LTS)
-- npm or yarn
-- [Expo Go](https://expo.dev/go) app on your mobile device (for testing)
+- Node.js (LTS), npm/yarn, Expo Go
+- [ai-cognitive-api (Flask)](https://github.com/Shyamkano/ai-cognitive-api)
 
-### Step 1: Clone the Repository
-```bash
-git clone https://github.com/[your-username]/beatus.git
-cd beatus
-```
+### 📚 API Documentation
+The live API documentation for the backend can be found here:  
+**[Interactive Swagger UI](https://shyamkano-ai-cognitive-api.hf.space/apidocs/)**
 
-### Step 2: Install Dependencies
-```bash
-npm install
-```
-
-### Step 3: Environment Configuration
-Create a `.env` file in the root directory and add your Supabase and Google API credentials:
-```env
-EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-# Additional IDs for Google Sign-In
-```
-
-### Step 4: Start Developing
-```bash
-npx expo start
-```
-Scan the QR code with your Expo Go app or press `a` for Android Emulator / `i` for iOS Simulator.
-
----
-
-## 🏗️ Project Structure
-
-- `app/`: Expo Router file-based pages and layouts.
-- `components/`: Reusable UI components.
-- `context/`: React Context providers (Player, Auth).
-- `hooks/`: Custom hooks for audio, theme, and health data.
-- `lib/`: Configuration files (Supabase client, API client).
-- `constants/`: Theme tokens, colors, and global constants.
-- `assets/`: Lottie animations, images, and fonts.
-
----
-
-## 🔐 Permissions
-The application requires the following permissions for full functionality:
-- **Health Data**: Access to Google Fit data types (Heart rate, steps, sleep).
-- **Audio**: Record/Modify audio settings for the binaural beats playback.
+### Setup
+1. **Clone & Install**: `npm install`
+2. **Environment**: Set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env`.
+3. **API Alignment**: Update the `API_URL` in `lib/apiClient.ts` to point to your Flask server.
+4. **Run**: `npx expo start`
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-*Developed by [Shyamkano](https://github.com/Shyamkano)*
+MIT License. Developed by [Shyamkano](https://github.com/Shyamkano)
